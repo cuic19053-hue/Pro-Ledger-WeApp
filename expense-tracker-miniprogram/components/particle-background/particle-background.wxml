@@ -1,0 +1,8 @@
+<!-- 粒子背景组件 -->
+<view class="particle-container" wx:if="{{showParticles}}">
+  <canvas 
+    canvas-id="particleCanvas" 
+    class="particle-canvas"
+    type="2d"
+  ></canvas>
+</view>

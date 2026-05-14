@@ -1,0 +1,36 @@
+<view class="skeleton-container" wx:if="{{show}}">
+  <view class="skeleton-header" wx:if="{{showHeader}}">
+    <view class="skeleton-title skeleton"></view>
+    <view class="skeleton-subtitle skeleton"></view>
+  </view>
+
+  <view class="skeleton-list">
+    <view 
+      class="skeleton-item skeleton-card" 
+      wx:for="{{count}}" 
+      wx:key="index"
+      style="animation-delay: {{index * 100}}ms"
+    >
+      <view class="skeleton-item-header" wx:if="{{showAvatar || showTitle || showSubtitle}}">
+        <view class="skeleton-avatar skeleton" wx:if="{{showAvatar}}"></view>
+        <view class="skeleton-info">
+          <view class="skeleton-line skeleton" wx:if="{{showTitle}}"></view>
+          <view class="skeleton-line skeleton short" wx:if="{{showSubtitle}}"></view>
+        </view>
+        <view class="skeleton-amount skeleton" wx:if="{{showAmount}}"></view>
+      </view>
+      <view class="skeleton-block skeleton" wx:if="{{showBlock}}"></view>
+    </view>
+  </view>
+
+  <view class="skeleton-content" wx:if="{{type === 'card'}}">
+    <view class="skeleton-card-large">
+      <view class="skeleton-block-large skeleton"></view>
+      <view class="skeleton-card-content">
+        <view class="skeleton-line skeleton long"></view>
+        <view class="skeleton-line skeleton medium"></view>
+        <view class="skeleton-amount skeleton"></view>
+      </view>
+    </view>
+  </view>
+</view>

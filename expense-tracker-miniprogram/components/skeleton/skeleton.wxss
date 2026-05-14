@@ -1,0 +1,130 @@
+.skeleton-container {
+  padding: var(--spacing-48) var(--spacing-24);
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--bg-secondary) 25%,
+    var(--color-gray-200) 50%,
+    var(--bg-secondary) 75%
+  );
+  background-size: 400% 100%;
+  border-radius: var(--radius-input);
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+.skeleton-header {
+  margin-bottom: var(--spacing-48);
+}
+
+.skeleton-title {
+  width: 280rpx;
+  height: 56rpx;
+  margin-bottom: var(--spacing-16);
+}
+
+.skeleton-subtitle {
+  width: 180rpx;
+  height: 32rpx;
+}
+
+.skeleton-card {
+  background: var(--bg-elevated);
+  border-radius: var(--radius-card);
+  padding: var(--spacing-32);
+  margin-bottom: var(--spacing-24);
+  box-shadow: var(--shadow-sm);
+  animation: fadeIn 0.5s ease forwards;
+  opacity: 0;
+}
+
+.skeleton-item-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-24);
+}
+
+.skeleton-avatar {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: var(--radius-input);
+  flex-shrink: 0;
+}
+
+.skeleton-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+}
+
+.skeleton-line {
+  height: 28rpx;
+  width: 100%;
+}
+
+.skeleton-line.short {
+  width: 120rpx;
+}
+
+.skeleton-line.medium {
+  width: 200rpx;
+  height: 24rpx;
+}
+
+.skeleton-line.long {
+  width: 100%;
+}
+
+.skeleton-amount {
+  width: 160rpx;
+  height: 40rpx;
+  flex-shrink: 0;
+}
+
+.skeleton-block {
+  height: 160rpx;
+  margin-top: var(--spacing-24);
+  border-radius: var(--radius-card);
+}
+
+.skeleton-card-large {
+  background: var(--bg-elevated);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.skeleton-block-large {
+  height: 320rpx;
+  width: 100%;
+  border-radius: 0;
+}
+
+.skeleton-card-content {
+  padding: var(--spacing-32);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -1,0 +1,159 @@
+.container {
+  min-height: 100vh;
+  background: #F8FAFC;
+  padding: 32rpx;
+}
+
+.page-header {
+  margin-bottom: 40rpx;
+}
+
+.page-title {
+  display: block;
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #1E293B;
+  margin-bottom: 12rpx;
+}
+
+.page-subtitle {
+  display: block;
+  font-size: 26rpx;
+  color: #94A3B8;
+}
+
+.faq-list {
+  margin-bottom: 40rpx;
+}
+
+.faq-item {
+  background: #FFFFFF;
+  border-radius: 20rpx;
+  padding: 28rpx 32rpx;
+  margin-bottom: 16rpx;
+}
+
+.faq-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.faq-question {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #334155;
+  flex: 1;
+  margin-right: 20rpx;
+}
+
+.faq-arrow {
+  font-size: 36rpx;
+  color: #94A3B8;
+  transition: transform 0.3s ease;
+}
+
+.faq-arrow.expanded {
+  transform: rotate(90deg);
+}
+
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  opacity: 0;
+}
+
+.faq-answer.show {
+  max-height: 500rpx;
+  opacity: 1;
+  margin-top: 24rpx;
+  padding-top: 24rpx;
+  border-top: 1rpx solid #F0F0F0;
+}
+
+.faq-answer text {
+  font-size: 26rpx;
+  color: #64748B;
+  line-height: 1.6;
+}
+
+.section {
+  margin-bottom: 40rpx;
+}
+
+.section-title {
+  display: block;
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1E293B;
+  margin-bottom: 24rpx;
+}
+
+.tips-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20rpx;
+}
+
+.tip-card {
+  background: #FFFFFF;
+  border-radius: 20rpx;
+  padding: 28rpx;
+  text-align: center;
+}
+
+.tip-icon {
+  display: block;
+  font-size: 48rpx;
+  margin-bottom: 12rpx;
+}
+
+.tip-title {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 8rpx;
+}
+
+.tip-desc {
+  display: block;
+  font-size: 22rpx;
+  color: #94A3B8;
+  line-height: 1.4;
+}
+
+.contact-section {
+  margin-bottom: 40rpx;
+}
+
+.contact-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16rpx;
+  background: #FFFFFF;
+  border-radius: 20rpx;
+  padding: 32rpx;
+}
+
+.contact-icon {
+  font-size: 36rpx;
+}
+
+.contact-text {
+  font-size: 30rpx;
+  font-weight: 500;
+  color: #5EA77A;
+}
+
+.version-info {
+  text-align: center;
+  padding: 40rpx 0;
+}
+
+.version-info text {
+  font-size: 24rpx;
+  color: #CBD5E1;
+}

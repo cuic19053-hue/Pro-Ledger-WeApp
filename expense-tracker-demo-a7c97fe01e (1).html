@@ -1,0 +1,1957 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>极简账簿 - 大学生记账Demo</title>
+    <style>
+        /* ========== CSS 变量定义 ========== */
+        :root {
+            --bg-primary: #F4F8F4;
+            --bg-pure: #FFFFFF;
+            --text-primary: #2C3A32;
+            --text-secondary: #A5B8AA;
+            --accent-start: #82C29B;
+            --accent-end: #5EA77A;
+            --accent-coral: #FF7C70;
+            --shadow-soft: rgba(94, 167, 122, 0.12);
+            --shadow-deep: rgba(44, 58, 50, 0.06);
+        }
+
+        /* ========== 全局样式 ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: #E8F2E8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* ========== 手机模拟器 ========== */
+        .phone-mockup {
+            width: 375px;
+            height: 812px;
+            background: var(--bg-primary);
+            border-radius: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 状态栏 */
+        .status-bar {
+            height: 44px;
+            background: var(--bg-primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            font-size: 12px;
+            color: var(--text-primary);
+        }
+
+        /* 页面容器 */
+        .page-container {
+            height: calc(100% - 44px - 80px);
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .page {
+            display: none;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* 底部导航 */
+        .tab-bar {
+            height: 80px;
+            background: var(--bg-pure);
+            border-top: 1px solid #E8F3E8;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding-bottom: 20px;
+        }
+
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab-item.active .tab-icon {
+            color: var(--accent-end);
+        }
+
+        .tab-item.active .tab-label {
+            color: var(--accent-end);
+        }
+
+        .tab-icon {
+            font-size: 24px;
+            color: var(--text-secondary);
+        }
+
+        .tab-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        /* ========== 通用组件 ========== */
+        .page-header {
+            padding: 20px 24px 16px;
+            background: var(--bg-primary);
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .card {
+            margin: 0 24px 16px;
+            padding: 20px;
+            background: var(--bg-pure);
+            border-radius: 20px;
+            box-shadow: 0 4rpx 16rpx var(--shadow-soft);
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
+            color: white;
+            border: none;
+            border-radius: 24px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 12px var(--shadow-soft);
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px var(--shadow-soft);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #F8FBF9;
+            color: var(--text-primary);
+            box-shadow: none;
+        }
+
+        /* ========== 登录页 ========== */
+        .login-page {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px 32px;
+        }
+
+        .logo {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
+            border-radius: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 32px;
+            font-size: 48px;
+            box-shadow: 0 8px 24px var(--shadow-soft);
+        }
+
+        .app-name {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .app-slogan {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 48px;
+        }
+
+        .input-group {
+            width: 100%;
+            margin-bottom: 16px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .input-group input {
+            width: 100%;
+            height: 48px;
+            padding: 0 16px;
+            background: var(--bg-pure);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            font-size: 14px;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            border-color: var(--accent-end);
+            box-shadow: 0 0 0 4px rgba(130, 194, 155, 0.1);
+        }
+
+        .input-group-with-code {
+            display: flex;
+            gap: 12px;
+        }
+
+        .input-group-with-code input {
+            flex: 1;
+        }
+
+        .code-btn {
+            padding: 0 20px;
+            background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 32px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--accent-end);
+        }
+
+        .checkbox-group label {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .login-btn {
+            width: 100%;
+            height: 52px;
+            font-size: 16px;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 32px 0;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #E0EDE8;
+        }
+
+        .divider span {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .wechat-login {
+            width: 100%;
+            height: 52px;
+            background: #07C160;
+            color: white;
+            border: none;
+            border-radius: 24px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* ========== 首页 ========== */
+        .overview-card {
+            background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
+            color: white;
+            padding: 24px;
+            border-radius: 20px;
+            margin: 0 24px 16px;
+            box-shadow: 0 8px 24px var(--shadow-soft);
+        }
+
+        .overview-title {
+            font-size: 13px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .overview-amount {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .overview-stats {
+            display: flex;
+            gap: 24px;
+        }
+
+        .overview-stat {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .overview-stat-label {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .overview-stat-value {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .budget-progress {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            margin-top: 16px;
+            overflow: hidden;
+        }
+
+        .budget-progress-bar {
+            height: 100%;
+            background: white;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .budget-text {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-top: 8px;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin: 0 24px 16px;
+        }
+
+        .action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 16px 12px;
+            background: var(--bg-pure);
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--shadow-soft);
+        }
+
+        .action-icon {
+            font-size: 28px;
+        }
+
+        .action-label {
+            font-size: 12px;
+            color: var(--text-primary);
+        }
+
+        .recent-bills {
+            margin: 0 24px;
+        }
+
+        .recent-bills-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .recent-bills-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .view-all-btn {
+            font-size: 13px;
+            color: var(--accent-end);
+            cursor: pointer;
+        }
+
+        .bill-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            background: var(--bg-pure);
+            border-radius: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+        }
+
+        .bill-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .bill-icon {
+            width: 40px;
+            height: 40px;
+            background: #F8FBF9;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .bill-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .bill-category {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .bill-date {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .bill-amount {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--accent-coral);
+        }
+
+        .bill-amount.income {
+            color: var(--accent-end);
+        }
+
+        /* ========== 记账弹窗 ========== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(44, 58, 50, 0.6);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            width: 320px;
+            max-height: 600px;
+            background: var(--bg-pure);
+            border-radius: 32px;
+            padding: 32px 24px;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .close-btn {
+            width: 40px;
+            height: 40px;
+            background: #F8FBF9;
+            border: none;
+            border-radius: 20px;
+            font-size: 20px;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        .type-tabs {
+            display: flex;
+            background: #F8FBF9;
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 24px;
+        }
+
+        .type-tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .type-tab.active {
+            background: var(--bg-pure);
+            color: var(--accent-end);
+            box-shadow: 0 2px 8px var(--shadow-soft);
+        }
+
+        .expense-input {
+            width: 100%;
+            height: 80px;
+            background: #F8FBF9;
+            border: 2px solid transparent;
+            border-radius: 16px;
+            padding: 0 20px;
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .expense-input:focus {
+            border-color: var(--accent-end);
+            box-shadow: 0 0 0 4px rgba(130, 194, 155, 0.1);
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .category-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 8px;
+            background: #F8FBF9;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .category-item.selected {
+            background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
+            color: white;
+        }
+
+        .category-icon {
+            font-size: 24px;
+        }
+
+        .category-label {
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .quick-amounts {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .quick-amount-btn {
+            padding: 8px 16px;
+            background: #F8FBF9;
+            border: none;
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quick-amount-btn:hover {
+            background: var(--accent-end);
+            color: white;
+        }
+
+        .remark-input {
+            width: 100%;
+            height: 60px;
+            padding: 12px;
+            background: #F8FBF9;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            font-size: 14px;
+            color: var(--text-primary);
+            resize: none;
+            margin-bottom: 24px;
+        }
+
+        .save-btn {
+            width: 100%;
+            height: 48px;
+        }
+
+        /* ========== 个人中心 ========== */
+        .user-info-card {
+            padding: 32px 24px;
+            background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
+            border-radius: 0 0 32px 32px;
+            margin: 0 -24px 24px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-details {
+            flex: 1;
+        }
+
+        .user-name {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .user-phone {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .menu-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            background: var(--bg-pure);
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .menu-item:hover {
+            background: #F8FBF9;
+        }
+
+        .menu-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .menu-icon {
+            font-size: 20px;
+        }
+
+        .menu-label {
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .menu-arrow {
+            font-size: 20px;
+            color: var(--text-secondary);
+        }
+
+        /* ========== 账单历史 ========== */
+        .filter-bar {
+            display: flex;
+            gap: 12px;
+            padding: 0 24px 16px;
+            overflow-x: auto;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            background: var(--bg-pure);
+            border: 2px solid transparent;
+            border-radius: 20px;
+            font-size: 13px;
+            color: var(--text-primary);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
+            color: white;
+            border-color: transparent;
+        }
+
+        .date-group {
+            margin-bottom: 24px;
+        }
+
+        .date-group-title {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            padding: 0 24px;
+        }
+
+        /* ========== 统计页面 ========== */
+        .stats-tabs {
+            display: flex;
+            gap: 12px;
+            padding: 0 24px 16px;
+            overflow-x: auto;
+        }
+
+        .stats-tab {
+            padding: 10px 20px;
+            background: var(--bg-pure);
+            border: 2px solid transparent;
+            border-radius: 20px;
+            font-size: 13px;
+            color: var(--text-primary);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+        }
+
+        .stats-tab.active {
+            background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
+            color: white;
+            border-color: transparent;
+        }
+
+        .chart-container {
+            height: 300px;
+            background: var(--bg-pure);
+            border-radius: 20px;
+            margin: 0 24px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .chart-placeholder {
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        .pie-chart {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: conic-gradient(
+                var(--accent-start) 0deg 108deg,
+                var(--accent-end) 108deg 198deg,
+                #A5D8BA 198deg 252deg,
+                #7BC496 252deg 306deg,
+                #5EA77A 306deg 360deg
+            );
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .pie-chart::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            background: var(--bg-pure);
+            border-radius: 50%;
+        }
+
+        .chart-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: center;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--text-primary);
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+
+        .category-stats {
+            margin: 0 24px;
+        }
+
+        .category-stat-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            background: var(--bg-pure);
+            border-radius: 16px;
+            margin-bottom: 12px;
+        }
+
+        .category-stat-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .category-stat-icon {
+            width: 36px;
+            height: 36px;
+            background: #F8FBF9;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .category-stat-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .category-stat-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .category-stat-percent {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .category-stat-amount {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* ========== 预算页面 ========== */
+        .budget-overview {
+            text-align: center;
+            padding: 24px;
+        }
+
+        .budget-total {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .budget-amount {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .budget-amount.used {
+            color: var(--accent-coral);
+        }
+
+        .budget-remaining {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        .budget-bar-container {
+            height: 12px;
+            background: #E8F3E8;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 32px;
+        }
+
+        .budget-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-start), var(--accent-end));
+            border-radius: 6px;
+            transition: width 0.3s ease;
+        }
+
+        .budget-bar.warning {
+            background: linear-gradient(90deg, #FFA500, #FF7C70);
+        }
+
+        .category-budgets {
+            margin: 0 24px;
+        }
+
+        .category-budget-item {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 20px;
+            background: var(--bg-pure);
+            border-radius: 16px;
+            margin-bottom: 12px;
+        }
+
+        .category-budget-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .category-budget-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .category-budget-icon {
+            width: 36px;
+            height: 36px;
+            background: #F8FBF9;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .category-budget-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .category-budget-amount {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .category-budget-amount.over {
+            color: var(--accent-coral);
+        }
+
+        .category-budget-progress {
+            height: 8px;
+            background: #E8F3E8;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .category-budget-progress-bar {
+            height: 100%;
+            background: var(--accent-end);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .category-budget-progress-bar.over {
+            background: var(--accent-coral);
+        }
+
+        /* ========== 智能分析 ========== */
+        .api-status {
+            padding: 16px 24px;
+            margin: 0 24px 16px;
+            background: linear-gradient(135deg, rgba(130, 194, 155, 0.1), rgba(94, 167, 122, 0.1));
+            border-radius: 16px;
+            border: 1px solid rgba(130, 194, 155, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .api-status-icon {
+            font-size: 24px;
+        }
+
+        .api-status-text {
+            flex: 1;
+        }
+
+        .api-status-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .api-status-desc {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .api-status-action {
+            padding: 8px 16px;
+            background: var(--accent-end);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .analysis-section {
+            margin: 0 24px 16px;
+        }
+
+        .analysis-input-group {
+            margin-bottom: 16px;
+        }
+
+        .analysis-input-group label {
+            display: block;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .analysis-select {
+            width: 100%;
+            height: 48px;
+            padding: 0 16px;
+            background: var(--bg-pure);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .analysis-textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 12px;
+            background: var(--bg-pure);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            font-size: 14px;
+            color: var(--text-primary);
+            resize: none;
+        }
+
+        .quick-prompts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .prompt-chip {
+            padding: 8px 16px;
+            background: #F8FBF9;
+            border-radius: 16px;
+            font-size: 12px;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .prompt-chip:hover {
+            background: var(--accent-end);
+            color: white;
+        }
+
+        .analyze-btn {
+            width: 100%;
+            height: 48px;
+        }
+
+        .analysis-result {
+            margin: 0 24px;
+            padding: 20px;
+            background: var(--bg-pure);
+            border-radius: 16px;
+            display: none;
+        }
+
+        .analysis-result.active {
+            display: block;
+        }
+
+        .analysis-result-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .analysis-result-content {
+            font-size: 14px;
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+
+        /* ========== 设置页面 ========== */
+        .settings-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 0 24px;
+        }
+
+        .settings-section {
+            background: var(--bg-pure);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .settings-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            border-bottom: 1px solid #F5F8F5;
+            cursor: pointer;
+        }
+
+        .settings-item:last-child {
+            border-bottom: none;
+        }
+
+        .settings-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .settings-icon {
+            font-size: 20px;
+        }
+
+        .settings-label {
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .settings-value {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .settings-arrow {
+            font-size: 20px;
+            color: var(--text-secondary);
+        }
+
+        /* Toast 提示 */
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 2000;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .toast.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- 手机模拟器 -->
+    <div class="phone-mockup">
+        <!-- 状态栏 -->
+        <div class="status-bar">
+            <span>20:41</span>
+            <span>极简账簿</span>
+            <span>📶 🔋</span>
+        </div>
+
+        <!-- 页面容器 -->
+        <div class="page-container">
+            <!-- 登录页 -->
+            <div class="page login-page active" id="login-page">
+                <div class="logo">💰</div>
+                <h1 class="app-name">极简账簿</h1>
+                <p class="app-slogan">大学生专属记账助手</p>
+                
+                <div class="input-group">
+                    <label>手机号</label>
+                    <input type="tel" placeholder="请输入11位手机号" id="phone-input">
+                </div>
+                
+                <div class="input-group input-group-with-code">
+                    <input type="text" placeholder="请输入验证码" id="code-input">
+                    <button class="code-btn" onclick="sendCode()">获取验证码</button>
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="agreement" checked>
+                    <label for="agreement">我已阅读并同意《用户协议》和《隐私政策》</label>
+                </div>
+                
+                <button class="btn login-btn" onclick="handleLogin()">登录</button>
+                
+                <div class="divider">
+                    <span>或</span>
+                </div>
+                
+                <button class="wechat-login" onclick="handleWechatLogin()">
+                    <span>💚</span>
+                    <span>微信一键登录</span>
+                </button>
+            </div>
+
+            <!-- 首页 -->
+            <div class="page" id="home-page">
+                <div class="page-header">
+                    <h1 class="page-title">我的账本</h1>
+                </div>
+                
+                <div class="overview-card">
+                    <div class="overview-title">本月结余</div>
+                    <div class="overview-amount">¥ 2,856</div>
+                    <div class="overview-stats">
+                        <div class="overview-stat">
+                            <span class="overview-stat-label">收入</span>
+                            <span class="overview-stat-value">¥4,500</span>
+                        </div>
+                        <div class="overview-stat">
+                            <span class="overview-stat-label">支出</span>
+                            <span class="overview-stat-value">¥1,644</span>
+                        </div>
+                    </div>
+                    <div class="budget-progress">
+                        <div class="budget-progress-bar" style="width: 54.8%"></div>
+                    </div>
+                    <div class="budget-text">预算使用：54.8% （剩余 ¥1,856）</div>
+                </div>
+                
+                <div class="quick-actions">
+                    <div class="action-btn" onclick="showAddModal('expense')">
+                        <div class="action-icon">🍜</div>
+                        <div class="action-label">餐饮</div>
+                    </div>
+                    <div class="action-btn" onclick="showAddModal('expense')">
+                        <div class="action-icon">🛒</div>
+                        <div class="action-label">购物</div>
+                    </div>
+                    <div class="action-btn" onclick="showAddModal('expense')">
+                        <div class="action-icon">🎬</div>
+                        <div class="action-label">娱乐</div>
+                    </div>
+                    <div class="action-btn" onclick="showAddModal('income')">
+                        <div class="action-icon">💵</div>
+                        <div class="action-label">收入</div>
+                    </div>
+                </div>
+                
+                <div class="recent-bills">
+                    <div class="recent-bills-header">
+                        <h3>最近账单</h3>
+                        <span class="view-all-btn" onclick="switchPage('bills')">查看全部 ›</span>
+                    </div>
+                    
+                    <div class="bill-item">
+                        <div class="bill-left">
+                            <div class="bill-icon">🍜</div>
+                            <div class="bill-info">
+                                <div class="bill-category">餐饮</div>
+                                <div class="bill-date">今天 12:30</div>
+                            </div>
+                        </div>
+                        <div class="bill-amount">-¥28</div>
+                    </div>
+                    
+                    <div class="bill-item">
+                        <div class="bill-left">
+                            <div class="bill-icon">🛒</div>
+                            <div class="bill-info">
+                                <div class="bill-category">购物</div>
+                                <div class="bill-date">昨天 18:45</div>
+                            </div>
+                        </div>
+                        <div class="bill-amount">-¥156</div>
+                    </div>
+                    
+                    <div class="bill-item">
+                        <div class="bill-left">
+                            <div class="bill-icon">💵</div>
+                            <div class="bill-info">
+                                <div class="bill-category">兼职收入</div>
+                                <div class="bill-date">3月14日</div>
+                            </div>
+                        </div>
+                        <div class="bill-amount income">+¥800</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 账单历史页 -->
+            <div class="page" id="bills-page">
+                <div class="page-header">
+                    <h1 class="page-title">账单明细</h1>
+                </div>
+                
+                <div class="filter-bar">
+                    <button class="filter-btn active">全部</button>
+                    <button class="filter-btn">支出</button>
+                    <button class="filter-btn">收入</button>
+                    <button class="filter-btn">本周</button>
+                    <button class="filter-btn">本月</button>
+                </div>
+                
+                <div class="date-group">
+                    <div class="date-group-title">今天</div>
+                    
+                    <div class="bill-item" style="margin: 0 24px 12px;">
+                        <div class="bill-left">
+                            <div class="bill-icon">🍜</div>
+                            <div class="bill-info">
+                                <div class="bill-category">餐饮</div>
+                                <div class="bill-date">午餐</div>
+                            </div>
+                        </div>
+                        <div class="bill-amount">-¥28</div>
+                    </div>
+                    
+                    <div class="bill-item" style="margin: 0 24px 12px;">
+                        <div class="bill-left">
+                            <div class="bill-icon">🚇</div>
+                            <div class="bill-info">
+                                <div class="bill-category">交通</div>
+                                <div class="bill-date">地铁</div>
+                            </div>
+                        </div>
+                        <div class="bill-amount">-¥5</div>
+                    </div>
+                </div>
+                
+                <div class="date-group">
+                    <div class="date-group-title">昨天</div>
+                    
+                    <div class="bill-item" style="margin: 0 24px 12px;">
+                        <div class="bill-left">
+                            <div class="bill-icon">🛒</div>
+                            <div class="bill-info">
+                                <div class="bill-category">购物</div>
+                                <div class="bill-date">日用品</div>
+                            </div>
+                        </div>
+                        <div class="bill-amount">-¥156</div>
+                    </div>
+                    
+                    <div class="bill-item" style="margin: 0 24px 12px;">
+                        <div class="bill-left">
+                            <div class="bill-icon">🎬</div>
+                            <div class="bill-info">
+                                <div class="bill-category">娱乐</div>
+                                <div class="bill-date">电影</div>
+                            </div>
+                        </div>
+                        <div class="bill-amount">-¥68</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 统计分析页 -->
+            <div class="page" id="stats-page">
+                <div class="page-header">
+                    <h1 class="page-title">统计分析</h1>
+                </div>
+                
+                <div class="stats-tabs">
+                    <button class="stats-tab active">支出分析</button>
+                    <button class="stats-tab">收入分析</button>
+                    <button class="stats-tab">趋势分析</button>
+                </div>
+                
+                <div class="chart-container">
+                    <div class="chart-placeholder">
+                        <div class="pie-chart"></div>
+                        <div class="chart-legend">
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: var(--accent-start)"></div>
+                                <span>餐饮 30%</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: var(--accent-end)"></div>
+                                <span>购物 25%</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #A5D8BA"></div>
+                                <span>娱乐 15%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="category-stats">
+                    <h3 class="section-title">分类排行</h3>
+                    
+                    <div class="category-stat-item">
+                        <div class="category-stat-left">
+                            <div class="category-stat-icon">🍜</div>
+                            <div class="category-stat-info">
+                                <div class="category-stat-name">餐饮</div>
+                                <div class="category-stat-percent">30% · 12笔</div>
+                            </div>
+                        </div>
+                        <div class="category-stat-amount">-¥493</div>
+                    </div>
+                    
+                    <div class="category-stat-item">
+                        <div class="category-stat-left">
+                            <div class="category-stat-icon">🛒</div>
+                            <div class="category-stat-info">
+                                <div class="category-stat-name">购物</div>
+                                <div class="category-stat-percent">25% · 8笔</div>
+                            </div>
+                        </div>
+                        <div class="category-stat-amount">-¥411</div>
+                    </div>
+                    
+                    <div class="category-stat-item">
+                        <div class="category-stat-left">
+                            <div class="category-stat-icon">🎬</div>
+                            <div class="category-stat-info">
+                                <div class="category-stat-name">娱乐</div>
+                                <div class="category-stat-percent">15% · 5笔</div>
+                            </div>
+                        </div>
+                        <div class="category-stat-amount">-¥247</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 预算管理页 -->
+            <div class="page" id="budget-page">
+                <div class="page-header">
+                    <h1 class="page-title">预算管理</h1>
+                </div>
+                
+                <div class="card budget-overview">
+                    <div class="budget-total">本月总预算</div>
+                    <div class="budget-amount">¥3,500</div>
+                    <div class="budget-remaining">剩余：¥1,856</div>
+                    <div class="budget-bar-container">
+                        <div class="budget-bar" style="width: 54.8%"></div>
+                    </div>
+                </div>
+                
+                <div class="category-budgets">
+                    <h3 class="section-title">分类预算</h3>
+                    
+                    <div class="category-budget-item">
+                        <div class="category-budget-header">
+                            <div class="category-budget-left">
+                                <div class="category-budget-icon">🍜</div>
+                                <div class="category-budget-name">餐饮</div>
+                            </div>
+                            <div class="category-budget-amount">¥1,100 / ¥1,500</div>
+                        </div>
+                        <div class="category-budget-progress">
+                            <div class="category-budget-progress-bar" style="width: 73.3%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="category-budget-item">
+                        <div class="category-budget-header">
+                            <div class="category-budget-left">
+                                <div class="category-budget-icon">🛒</div>
+                                <div class="category-budget-name">购物</div>
+                            </div>
+                            <div class="category-budget-amount">¥850 / ¥1,000</div>
+                        </div>
+                        <div class="category-budget-progress">
+                            <div class="category-budget-progress-bar" style="width: 85%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="category-budget-item">
+                        <div class="category-budget-header">
+                            <div class="category-budget-left">
+                                <div class="category-budget-icon">🎬</div>
+                                <div class="category-budget-name">娱乐</div>
+                            </div>
+                            <div class="category-budget-amount over">¥420 / ¥300</div>
+                        </div>
+                        <div class="category-budget-progress">
+                            <div class="category-budget-progress-bar over" style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 智能分析页 -->
+            <div class="page" id="analysis-page">
+                <div class="page-header">
+                    <h1 class="page-title">智能分析</h1>
+                </div>
+                
+                <div class="api-status">
+                    <div class="api-status-icon">🔗</div>
+                    <div class="api-status-text">
+                        <div class="api-status-title">API 已连接</div>
+                        <div class="api-status-desc">OpenAI GPT-4</div>
+                    </div>
+                    <button class="api-status-action">切换</button>
+                </div>
+                
+                <div class="card analysis-section">
+                    <h3 class="section-title">选择分析维度</h3>
+                    
+                    <div class="analysis-input-group">
+                        <label>时间范围</label>
+                        <select class="analysis-select">
+                            <option>近1个月</option>
+                            <option>近3个月</option>
+                            <option>近6个月</option>
+                            <option>自定义</option>
+                        </select>
+                    </div>
+                    
+                    <div class="analysis-input-group">
+                        <label>分析类型</label>
+                        <select class="analysis-select">
+                            <option>消费结构分析</option>
+                            <option>超支原因分析</option>
+                            <option>省钱优化建议</option>
+                            <option>消费趋势预测</option>
+                        </select>
+                    </div>
+                    
+                    <div class="quick-prompts">
+                        <span class="prompt-chip">分析餐饮消费</span>
+                        <span class="prompt-chip">为什么超支？</span>
+                        <span class="prompt-chip">如何省钱？</span>
+                    </div>
+                    
+                    <div class="analysis-input-group">
+                        <label>自定义问题</label>
+                        <textarea class="analysis-textarea" placeholder="输入你的问题，例如：分析我最近一个月的消费结构..."></textarea>
+                    </div>
+                    
+                    <button class="btn analyze-btn" onclick="showToast('正在分析中...')">开始分析</button>
+                </div>
+                
+                <div class="analysis-result">
+                    <div class="analysis-result-title">分析结果</div>
+                    <div class="analysis-result-content">
+                        <p><strong>消费结构分析：</strong></p>
+                        <p>• 餐饮支出占比最高（30%），建议控制在25%以内</p>
+                        <p>• 娱乐支出已超出预算（¥420/¥300），建议适当减少</p>
+                        <p>• 购物消费主要集中在周末，可考虑制定购物清单</p>
+                        <p><strong>优化建议：</strong></p>
+                        <p>• 每周制定消费计划，避免冲动购物</p>
+                        <p>• 选择更经济的就餐方式，减少外卖频率</p>
+                        <p>• 娱乐活动可以转向免费或低成本的选择</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 个人中心页 -->
+            <div class="page" id="profile-page">
+                <div class="user-info-card">
+                    <div class="user-avatar">😊</div>
+                    <div class="user-details">
+                        <div class="user-name">大学生</div>
+                        <div class="user-phone">138****8888</div>
+                    </div>
+                </div>
+                
+                <div class="menu-list" style="margin: 0 24px 24px;">
+                    <div class="menu-item">
+                        <div class="menu-left">
+                            <div class="menu-icon">👤</div>
+                            <div class="menu-label">个人信息</div>
+                        </div>
+                        <div class="menu-arrow">›</div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="menu-left">
+                            <div class="menu-icon">🔐</div>
+                            <div class="menu-label">安全设置</div>
+                        </div>
+                        <div class="menu-arrow">›</div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="menu-left">
+                            <div class="menu-icon">💾</div>
+                            <div class="menu-label">数据备份</div>
+                        </div>
+                        <div class="menu-arrow">›</div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="menu-left">
+                            <div class="menu-icon">📤</div>
+                            <div class="menu-label">数据导出</div>
+                        </div>
+                        <div class="menu-arrow">›</div>
+                    </div>
+                </div>
+                
+                <div class="settings-list">
+                    <div class="settings-section">
+                        <div class="settings-item">
+                            <div class="settings-left">
+                                <div class="settings-icon">🔔</div>
+                                <div class="settings-label">超支提醒</div>
+                            </div>
+                            <div class="settings-value">已开启</div>
+                        </div>
+                        
+                        <div class="settings-item">
+                            <div class="settings-left">
+                                <div class="settings-icon">🎨</div>
+                                <div class="settings-label">主题设置</div>
+                            </div>
+                            <div class="settings-value">浅色模式</div>
+                        </div>
+                        
+                        <div class="settings-item">
+                            <div class="settings-left">
+                                <div class="settings-icon">💬</div>
+                                <div class="settings-label">意见反馈</div>
+                            </div>
+                            <div class="settings-arrow">›</div>
+                        </div>
+                        
+                        <div class="settings-item">
+                            <div class="settings-left">
+                                <div class="settings-icon">❓</div>
+                                <div class="settings-label">帮助中心</div>
+                            </div>
+                            <div class="settings-arrow">›</div>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-section" style="margin-top: 12px;">
+                        <div class="settings-item" style="color: #FF7C70;">
+                            <div class="settings-left">
+                                <div class="settings-icon">🗑️</div>
+                                <div class="settings-label">注销账号</div>
+                            </div>
+                            <div class="settings-arrow">›</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部导航 -->
+        <div class="tab-bar" id="tab-bar">
+            <div class="tab-item active" onclick="switchPage('home')">
+                <div class="tab-icon">🏠</div>
+                <div class="tab-label">首页</div>
+            </div>
+            <div class="tab-item" onclick="switchPage('bills')">
+                <div class="tab-icon">📋</div>
+                <div class="tab-label">账单</div>
+            </div>
+            <div class="tab-item" onclick="showAddModal('expense')">
+                <div class="tab-icon">➕</div>
+                <div class="tab-label">记账</div>
+            </div>
+            <div class="tab-item" onclick="switchPage('stats')">
+                <div class="tab-icon">📊</div>
+                <div class="tab-label">统计</div>
+            </div>
+            <div class="tab-item" onclick="switchPage('profile')">
+                <div class="tab-icon">👤</div>
+                <div class="tab-label">我的</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 记账弹窗 -->
+    <div class="modal-overlay" id="add-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">记一笔</div>
+                <button class="close-btn" onclick="hideAddModal()">✕</button>
+            </div>
+            
+            <div class="type-tabs">
+                <div class="type-tab active" onclick="switchType('expense')">支出</div>
+                <div class="type-tab" onclick="switchType('income')">收入</div>
+            </div>
+            
+            <input type="number" class="expense-input" placeholder="0.00" id="amount-input">
+            
+            <h3 class="section-title">选择分类</h3>
+            <div class="category-grid">
+                <div class="category-item selected" onclick="selectCategory(this)">
+                    <div class="category-icon">🍜</div>
+                    <div class="category-label">餐饮</div>
+                </div>
+                <div class="category-item" onclick="selectCategory(this)">
+                    <div class="category-icon">🛒</div>
+                    <div class="category-label">购物</div>
+                </div>
+                <div class="category-item" onclick="selectCategory(this)">
+                    <div class="category-icon">🚇</div>
+                    <div class="category-label">交通</div>
+                </div>
+                <div class="category-item" onclick="selectCategory(this)">
+                    <div class="category-icon">🎬</div>
+                    <div class="category-label">娱乐</div>
+                </div>
+                <div class="category-item" onclick="selectCategory(this)">
+                    <div class="category-icon">📚</div>
+                    <div class="category-label">学习</div>
+                </div>
+                <div class="category-item" onclick="selectCategory(this)">
+                    <div class="category-icon">💊</div>
+                    <div class="category-label">医疗</div>
+                </div>
+                <div class="category-item" onclick="selectCategory(this)">
+                    <div class="category-icon">🏠</div>
+                    <div class="category-label">住宿</div>
+                </div>
+                <div class="category-item" onclick="selectCategory(this)">
+                    <div class="category-icon">📱</div>
+                    <div class="category-label">通讯</div>
+                </div>
+            </div>
+            
+            <h3 class="section-title">快捷金额</h3>
+            <div class="quick-amounts">
+                <button class="quick-amount-btn">5元</button>
+                <button class="quick-amount-btn">10元</button>
+                <button class="quick-amount-btn">20元</button>
+                <button class="quick-amount-btn">50元</button>
+                <button class="quick-amount-btn">100元</button>
+            </div>
+            
+            <h3 class="section-title">备注（选填）</h3>
+            <textarea class="remark-input" placeholder="添加备注信息..." id="remark-input"></textarea>
+            
+            <button class="btn save-btn" onclick="saveBill()">保存</button>
+        </div>
+    </div>
+
+    <!-- Toast 提示 -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // 页面切换
+        function switchPage(page) {
+            // 隐藏所有页面
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            
+            // 显示目标页面
+            document.getElementById(page + '-page').classList.add('active');
+            
+            // 更新底部导航
+            document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+        }
+
+        // 显示记账弹窗
+        function showAddModal(type) {
+            document.getElementById('add-modal').classList.add('active');
+        }
+
+        // 隐藏记账弹窗
+        function hideAddModal() {
+            document.getElementById('add-modal').classList.remove('active');
+        }
+
+        // 切换收支类型
+        function switchType(type) {
+            document.querySelectorAll('.type-tab').forEach(t => t.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+        }
+
+        // 选择分类
+        function selectCategory(el) {
+            document.querySelectorAll('.category-item').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+        }
+
+        // 保存账单
+        function saveBill() {
+            const amount = document.getElementById('amount-input').value;
+            const remark = document.getElementById('remark-input').value;
+            
+            if (!amount || amount <= 0) {
+                showToast('请输入金额');
+                return;
+            }
+            
+            showToast('记账成功！');
+            hideAddModal();
+            
+            // 清空输入
+            document.getElementById('amount-input').value = '';
+            document.getElementById('remark-input').value = '';
+        }
+
+        // 登录处理
+        function handleLogin() {
+            const phone = document.getElementById('phone-input').value;
+            const code = document.getElementById('code-input').value;
+            
+            if (!phone || phone.length !== 11) {
+                showToast('请输入正确的手机号');
+                return;
+            }
+            
+            if (!code || code.length !== 6) {
+                showToast('请输入验证码');
+                return;
+            }
+            
+            // 模拟登录成功
+            document.getElementById('login-page').classList.remove('active');
+            document.getElementById('home-page').classList.add('active');
+            document.getElementById('tab-bar').style.display = 'flex';
+            
+            showToast('登录成功！');
+        }
+
+        // 微信登录
+        function handleWechatLogin() {
+            document.getElementById('login-page').classList.remove('active');
+            document.getElementById('home-page').classList.add('active');
+            document.getElementById('tab-bar').style.display = 'flex';
+            
+            showToast('登录成功！');
+        }
+
+        // 发送验证码
+        function sendCode() {
+            const phone = document.getElementById('phone-input').value;
+            
+            if (!phone || phone.length !== 11) {
+                showToast('请输入正确的手机号');
+                return;
+            }
+            
+            showToast('验证码已发送');
+        }
+
+        // Toast 提示
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('active');
+            
+            setTimeout(() => {
+                toast.classList.remove('active');
+            }, 2000);
+        }
+
+        // 点击遮罩关闭弹窗
+        document.getElementById('add-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideAddModal();
+            }
+        });
+
+        // 快捷金额点击
+        document.querySelectorAll('.quick-amount-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const amount = this.textContent.replace('元', '');
+                document.getElementById('amount-input').value = amount;
+            });
+        });
+    </script>
+</body>
+</html>

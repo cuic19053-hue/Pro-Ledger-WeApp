@@ -1,0 +1,54 @@
+{
+  "pages": [
+    "pages/splash/splash",
+    "pages/login/login",
+    "pages/home/home",
+    "pages/bills/bills",
+    "pages/add/add",
+    "pages/stats/stats",
+    "pages/profile/profile",
+    "pages/budget/budget",
+    "pages/bill-detail/bill-detail",
+    "pages/agreement/agreement",
+    "pages/privacy/privacy",
+    "pages/quick-bills-manage/quick-bills-manage"
+  ],
+  "window": {
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#F7F2EA",
+    "navigationBarTitleText": "CH 记账",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#F4EFE6"
+  },
+  "tabBar": {
+    "color": "#7B8790",
+    "selectedColor": "#167C74",
+    "backgroundColor": "#FFFDF8",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/home/home",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/bills/bills",
+        "text": "账单"
+      },
+      {
+        "pagePath": "pages/add/add",
+        "text": "记账"
+      },
+      {
+        "pagePath": "pages/stats/stats",
+        "text": "统计"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的"
+      }
+    ]
+  },
+  "usingComponents": {},
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

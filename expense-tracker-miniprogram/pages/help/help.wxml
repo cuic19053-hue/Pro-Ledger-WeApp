@@ -1,0 +1,56 @@
+<view class="container">
+  <view class="page-header">
+    <text class="page-title">帮助中心</text>
+    <text class="page-subtitle">常见问题与使用指南</text>
+  </view>
+
+  <view class="faq-list">
+    <view class="faq-item" wx:for="{{faqList}}" wx:key="id" bindtap="toggleFaq" data-index="{{index}}">
+      <view class="faq-header">
+        <text class="faq-question">{{item.question}}</text>
+        <text class="faq-arrow {{item.expanded ? 'expanded' : ''}}">›</text>
+      </view>
+      <view class="faq-answer {{item.expanded ? 'show' : ''}}">
+        <text>{{item.answer}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <text class="section-title">快捷操作</text>
+    <view class="tips-grid">
+      <view class="tip-card">
+        <text class="tip-icon">📝</text>
+        <text class="tip-title">快速记账</text>
+        <text class="tip-desc">首页点击分类即可一键记账</text>
+      </view>
+      <view class="tip-card">
+        <text class="tip-icon">📊</text>
+        <text class="tip-title">查看统计</text>
+        <text class="tip-desc">统计页查看月度消费分析</text>
+      </view>
+      <view class="tip-card">
+        <text class="tip-icon">💰</text>
+        <text class="tip-title">预算管理</text>
+        <text class="tip-desc">设置每月预算，控制支出</text>
+      </view>
+      <view class="tip-card">
+        <text class="tip-icon">📤</text>
+        <text class="tip-title">数据导出</text>
+        <text class="tip-desc">支持 CSV 和 JSON 格式导出</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="contact-section">
+    <text class="section-title">联系我们</text>
+    <view class="contact-btn" bindtap="goToFeedback">
+      <text class="contact-icon">💬</text>
+      <text class="contact-text">意见反馈</text>
+    </view>
+  </view>
+
+  <view class="version-info">
+    <text>CH 记账 v1.0.0</text>
+  </view>
+</view>

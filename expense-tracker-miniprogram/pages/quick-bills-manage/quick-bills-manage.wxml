@@ -1,0 +1,183 @@
+<view class="container">
+  <view class="page-header">
+    <text class="page-title">常用账单管理</text>
+  </view>
+
+  <view class="add-section">
+    <button class="add-btn" bindtap="showAddModal">
+      <text class="add-icon">+</text>
+      <text class="add-text">添加常用账单</text>
+    </button>
+  </view>
+
+  <view class="bills-list">
+    <block wx:for="{{quickBills}}" wx:key="id">
+      <view class="bill-card">
+        <view class="bill-left">
+          <view class="bill-icon">{{item.icon}}</view>
+          <view class="bill-info">
+            <text class="bill-name">{{item.name}}</text>
+            <text class="bill-detail">{{item.category}} · ¥{{item.defaultAmount}}</text>
+            <text class="bill-remark" wx:if="{{item.remark}}">{{item.remark}}</text>
+          </view>
+        </view>
+        <view class="bill-actions">
+          <view class="action-btn usage-btn" bindtap="openUsageManage" data-id="{{item.id}}">
+            <text>用途</text>
+          </view>
+          <view class="action-btn edit-btn" bindtap="editBill" data-id="{{item.id}}">
+            <text>编辑</text>
+          </view>
+          <view class="action-btn delete-btn" bindtap="deleteBill" data-id="{{item.id}}">
+            <text>删除</text>
+          </view>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <view class="empty-state" wx:if="{{quickBills.length === 0}}">
+    <text class="empty-icon">📋</text>
+    <text class="empty-text">暂无常用账单</text>
+    <text class="empty-hint">点击上方按钮添加常用账单</text>
+  </view>
+
+  <view class="modal-overlay {{showModal ? 'show' : ''}}" bindtap="closeModal">
+    <view class="modal-content" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">{{editingId ? '编辑常用账单' : '添加常用账单'}}</text>
+        <button class="close-btn" bindtap="closeModal">✕</button>
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">名称</text>
+        <input class="form-input" placeholder="请输入常用账单名称" value="{{form.name}}" bindinput="onNameInput" />
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">图标</text>
+        <view class="icon-grid">
+          <view class="icon-item {{form.icon === item ? 'selected' : ''}}" 
+                wx:for="{{iconOptions}}" 
+                wx:key="*this"
+                bindtap="selectIcon" 
+                data-icon="{{item}}">
+            <text class="icon-text">{{item}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">默认金额</text>
+        <input class="form-input" type="digit" placeholder="请输入默认金额" value="{{form.defaultAmount}}" bindinput="onAmountInput" />
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">类型</text>
+        <view class="type-selector">
+          <view class="type-option {{form.type === 'expense' ? 'active' : ''}}" bindtap="selectType" data-type="expense">
+            <text>支出</text>
+          </view>
+          <view class="type-option {{form.type === 'income' ? 'active' : ''}}" bindtap="selectType" data-type="income">
+            <text>收入</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">分类</text>
+        <view class="category-selector">
+          <scroll-view class="category-scroll" scroll-x="true">
+            <view class="category-item {{form.category === item ? 'selected' : ''}}" 
+                  wx:for="{{currentCategories}}" 
+                  wx:key="*this"
+                  bindtap="selectCategory" 
+                  data-category="{{item}}">
+              <text>{{item}}</text>
+            </view>
+          </scroll-view>
+        </view>
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">备注</text>
+        <textarea class="form-textarea" placeholder="添加备注信息..." value="{{form.remark}}" bindinput="onRemarkInput" />
+      </view>
+
+      <button class="btn save-btn" bindtap="saveBill">{{editingId ? '保存修改' : '添加'}}</button>
+    </view>
+  </view>
+
+  <view class="modal-overlay {{showUsageModal ? 'show' : ''}}" bindtap="closeUsageModal">
+    <view class="modal-content" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">用途管理 - {{currentBillName}}</text>
+        <button class="close-btn" bindtap="closeUsageModal">✕</button>
+      </view>
+
+      <view class="usages-list">
+        <block wx:for="{{usagesList}}" wx:key="id">
+          <view class="usage-item {{item.id === currentBillDefaultUsageId ? 'default-usage' : ''}}">
+            <view class="usage-info">
+              <view class="usage-left">
+                <text class="usage-name">{{item.name}}</text>
+                <text class="usage-amount">¥{{item.amount}}</text>
+                <text class="usage-remark" wx:if="{{item.remark}}">{{item.remark}}</text>
+              </view>
+              <view class="usage-right">
+                <text class="default-badge" wx:if="{{item.id === currentBillDefaultUsageId}}">默认</text>
+              </view>
+            </view>
+            <view class="usage-actions">
+              <view class="small-btn set-default-btn" bindtap="setDefaultUsage" data-id="{{item.id}}" wx:if="{{item.id !== currentBillDefaultUsageId}}">
+                <text>设为默认</text>
+              </view>
+              <view class="small-btn edit-usage-btn" bindtap="editUsage" data-id="{{item.id}}">
+                <text>编辑</text>
+              </view>
+              <view class="small-btn delete-usage-btn" bindtap="deleteUsage" data-id="{{item.id}}">
+                <text>删除</text>
+              </view>
+            </view>
+          </view>
+        </block>
+      </view>
+
+      <view class="empty-usages" wx:if="{{usagesList.length === 0}}">
+        <text class="empty-icon">📝</text>
+        <text class="empty-text">暂无用途</text>
+      </view>
+
+      <button class="btn add-usage-btn" bindtap="showAddUsageModal">
+        <text class="add-usage-icon">+</text>
+        <text class="add-usage-text">添加用途</text>
+      </button>
+    </view>
+  </view>
+
+  <view class="modal-overlay {{showEditUsageModal ? 'show' : ''}}" bindtap="closeEditUsageModal">
+    <view class="modal-content" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">{{editingUsageId ? '编辑用途' : '添加用途'}}</text>
+        <button class="close-btn" bindtap="closeEditUsageModal">✕</button>
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">名称</text>
+        <input class="form-input" placeholder="请输入用途名称" value="{{usageForm.name}}" bindinput="onUsageNameInput" />
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">金额</text>
+        <input class="form-input" type="digit" placeholder="请输入金额" value="{{usageForm.amount}}" bindinput="onUsageAmountInput" />
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">备注</text>
+        <textarea class="form-textarea" placeholder="添加备注信息..." value="{{usageForm.remark}}" bindinput="onUsageRemarkInput" />
+      </view>
+
+      <button class="btn save-btn" bindtap="saveUsage">{{editingUsageId ? '保存修改' : '添加'}}</button>
+    </view>
+  </view>
+</view>

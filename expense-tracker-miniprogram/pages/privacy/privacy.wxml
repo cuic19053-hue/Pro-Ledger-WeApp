@@ -1,0 +1,111 @@
+<view class="page">
+  <view class="page-header">
+    <text class="page-title">隐私政策</text>
+  </view>
+
+  <view class="page-content">
+    <view class="content-card card animate-fadeIn">
+      <view class="content-section">
+        <text class="section-title">引言</text>
+        <text class="section-text">CH 记账（以下简称"我们"）非常重视用户的隐私和个人信息保护。本隐私政策旨在向您说明我们如何收集、使用、存储和保护您的个人信息，以及您享有的相关权利。请您在使用本应用前仔细阅读并理解本隐私政策的全部内容。</text>
+      </view>
+
+      <view class="content-section">
+        <text class="section-title">一、信息收集</text>
+        <text class="section-text">1. 您主动提供的信息：
+   - 注册时提供的手机号码、昵称、头像
+   - 记账时输入的金额、分类、备注等信息
+   - 设置预算时的相关数据
+
+2. 我们自动收集的信息：
+   - 设备信息：设备型号、操作系统版本
+   - 操作日志：功能使用情况、访问时间
+   - 网络日志：IP 地址、请求日志
+
+3. 从第三方获取的信息：
+   - 当您使用微信登录时，我们可能从微信获取您的昵称、头像等公开信息</text>
+      </view>
+
+      <view class="content-section">
+        <text class="section-title">二、信息使用</text>
+        <text class="section-text">我们可能将收集的信息用于以下目的：
+
+1. 提供记账服务：记录、分类、统计您的账单数据
+2. 数据分析：生成消费报表、趋势分析等
+3. 个性化服务：根据您的使用习惯优化功能
+4. 安全保障：用于身份验证、风险控制等
+5. 服务改进：分析用户行为，改进产品功能</text>
+      </view>
+
+      <view class="content-section">
+        <text class="section-title">三、信息存储</text>
+        <text class="section-text">1. 存储地点：我们收集的信息将存储于中国大陆境内
+
+2. 存储期限：我们仅在实现目的所需的期限内保留您的个人信息。如您注销账号，我们将删除或匿名化处理您的信息
+
+3. 存储方式：我们采用加密、备份等技术措施保护您的信息安全</text>
+      </view>
+
+      <view class="content-section">
+        <text class="section-title">四、信息共享与披露</text>
+        <text class="section-text">1. 我们不会向任何第三方出售、出租或交易您的个人信息
+
+2. 在以下情况下，我们可能披露您的信息：
+   - 获得您的明确同意
+   - 根据法律法规或政府要求
+   - 为维护社会公共利益
+   - 为保护我们及用户的合法权益</text>
+      </view>
+
+      <view class="content-section">
+        <text class="section-title">五、信息安全</text>
+        <text class="section-text">我们采取多种安全措施保护您的信息：
+
+1. 技术措施：数据加密、访问控制、防火墙等
+2. 管理措施：建立信息安全管理制度，限制员工访问
+3. 物理措施：数据中心安全保护
+
+但请注意，互联网环境并非 100% 安全，我们将尽力保护您的信息安全。</text>
+      </view>
+
+      <view class="content-section">
+        <text class="section-title">六、您的权利</text>
+        <text class="section-text">您对自己的个人信息享有以下权利：
+
+1. 访问权：您可以查看我们收集的您的信息
+2. 更正权：您可以更正不准确的个人信息
+3. 删除权：在特定情况下，您可以要求删除您的信息
+4. 撤回同意权：您可以随时撤回对信息处理的授权
+5. 注销权：您可以申请注销账号</text>
+      </view>
+
+      <view class="content-section">
+        <text class="section-title">七、未成年人保护</text>
+        <text class="section-text">1. 我们非常重视对未成年人个人信息的保护
+
+2. 若您是 14 周岁以下的未成年人，请在监护人指导下使用本应用
+
+3. 若您是未成年人的监护人，请监督未成年人的使用行为，确保其理解本隐私政策</text>
+      </view>
+
+      <view class="content-section">
+        <text class="section-title">八、政策更新</text>
+        <text class="section-text">我们可能会不时更新本隐私政策。未经您明确同意，我们不会削减您按照本隐私政策所享有的权利。对于重大变更，我们还会提供更为显著的通知。更新后的隐私政策自公布之日起生效。</text>
+      </view>
+
+      <view class="content-section">
+        <text class="section-title">九、联系我们</text>
+        <text class="section-text">如果您对本隐私政策有任何疑问、意见或建议，请通过以下方式联系我们：
+
+邮箱：support@example.com
+
+我们将在收到您的请求后尽快予以回复。</text>
+      </view>
+
+      <view class="content-footer">
+        <text class="footer-text">更新日期：2026 年 4 月 8 日</text>
+        <text class="footer-text">生效日期：2026 年 4 月 8 日</text>
+      </view>
+    </view>
+  </view>
+</view>

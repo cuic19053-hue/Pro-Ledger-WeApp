@@ -1,0 +1,116 @@
+<view class="page stats-page">
+  <view class="page-header animate-slideUp stagger-1">
+    <view class="page-header-copy">
+      <text class="page-kicker">FINANCE SNAPSHOT</text>
+      <text class="large-title">统计</text>
+    </view>
+    <view class="period-badge">
+      <text class="period-badge-text">近{{labels.length || 6}}个月</text>
+    </view>
+  </view>
+
+  <view class="stats-hero animate-slideUp stagger-2">
+    <view class="stats-hero-main">
+      <text class="stats-hero-kicker">支出总览</text>
+      <text class="stats-hero-value">{{totalExpenseDisplay}}</text>
+      <text class="stats-hero-note">{{maxExpenseMonth ? '峰值月份：' + maxExpenseMonth + ' · ' + maxExpenseDisplay : '暂无可展示趋势峰值'}}</text>
+    </view>
+    <view class="stats-hero-side">
+      <view class="mini-stat-card income-card">
+        <text class="mini-stat-label">总收入</text>
+        <text class="mini-stat-value income-value">{{totalIncomeDisplay}}</text>
+      </view>
+      <view class="mini-stat-card">
+        <text class="mini-stat-label">月均支出</text>
+        <text class="mini-stat-value">{{avgExpenseDisplay}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="chart-section animate-slideUp stagger-3">
+    <view class="section-header">
+      <view>
+        <text class="section-kicker">TREND</text>
+        <text class="section-title">支出趋势</text>
+      </view>
+      <text class="section-note">按月观察消费节奏</text>
+    </view>
+
+    <view wx:if="{{hasData}}" class="chart-wrapper">
+      <view class="chart-container" bindtouchmove="onChartTouchMove" bindtouchend="onChartTouchEnd">
+        <canvas type="2d" id="lineChart" class="chart-canvas"></canvas>
+        <view class="chart-tooltip" style="top: {{tooltipTop}}rpx; left: {{tooltipLeft}}rpx; opacity: {{tooltipOpacity}};">
+          {{tooltipAmount}}
+        </view>
+      </view>
+
+      <view class="chart-labels">
+        <text wx:for="{{labels}}" wx:key="index" class="chart-label">{{item}}</text>
+      </view>
+    </view>
+
+    <view wx:else class="empty-state">
+      <view class="empty-icon">📊</view>
+      <text class="empty-text">暂无数据</text>
+    </view>
+  </view>
+
+  <view wx:if="{{hasData}}" class="category-section animate-slideUp stagger-4">
+    <view class="section-header">
+      <view>
+        <text class="section-kicker">BREAKDOWN</text>
+        <text class="section-title">分类分布</text>
+      </view>
+      <view class="category-tabs">
+        <text class="category-tab {{activeTab === 'expense' ? 'active' : ''}}" bindtap="switchTab" data-tab="expense">支出分类</text>
+        <text class="category-tab {{activeTab === 'income' ? 'active' : ''}}" bindtap="switchTab" data-tab="income">收入分类</text>
+      </view>
+    </view>
+
+    <view wx:if="{{activeTab === 'expense'}}" class="category-list">
+      <view wx:if="{{categoryStats.length > 0}}">
+        <view wx:for="{{categoryStats}}" wx:key="id" class="category-bar-item">
+          <view class="category-bar-header">
+            <view class="category-bar-left">
+              <text class="category-bar-icon">{{item.icon}}</text>
+              <view class="category-bar-copy">
+                <text class="category-bar-name">{{item.name}}</text>
+                <text class="category-bar-count">{{item.count}} 笔</text>
+              </view>
+            </view>
+            <text class="category-bar-amount">{{item.amountDisplay}}</text>
+          </view>
+          <view class="category-bar-track">
+            <view class="category-bar-fill expense-fill" style="width: {{item.percent}}%;"></view>
+          </view>
+        </view>
+      </view>
+      <view wx:else class="empty-category">
+        <text class="empty-category-text">本月暂无支出记录</text>
+      </view>
+    </view>
+
+    <view wx:if="{{activeTab === 'income'}}" class="category-list">
+      <view wx:if="{{incomeCategoryStats.length > 0}}">
+        <view wx:for="{{incomeCategoryStats}}" wx:key="id" class="category-bar-item">
+          <view class="category-bar-header">
+            <view class="category-bar-left">
+              <text class="category-bar-icon">{{item.icon}}</text>
+              <view class="category-bar-copy">
+                <text class="category-bar-name">{{item.name}}</text>
+                <text class="category-bar-count">{{item.count}} 笔</text>
+              </view>
+            </view>
+            <text class="category-bar-amount income-amount">{{item.amountDisplay}}</text>
+          </view>
+          <view class="category-bar-track">
+            <view class="category-bar-fill income-fill" style="width: {{item.percent}}%;"></view>
+          </view>
+        </view>
+      </view>
+      <view wx:else class="empty-category">
+        <text class="empty-category-text">本月暂无收入记录</text>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,96 @@
+<view class="page bills-page">
+  <view class="page-header animate-slideUp stagger-1">
+    <view class="page-header-copy">
+      <text class="page-kicker">ALL RECORDS</text>
+      <text class="large-title">账单明细</text>
+    </view>
+    <view class="header-actions">
+      <text class="edit-btn {{isEditMode ? 'done' : ''}}" bindtap="toggleEditMode">
+        {{isEditMode ? '完成' : '编辑'}}
+      </text>
+    </view>
+  </view>
+
+  <view class="summary-strip animate-slideUp stagger-2">
+    <view class="summary-card expense">
+      <text class="summary-label">累计支出</text>
+      <text class="summary-value">{{totalExpenseDisplay}}</text>
+    </view>
+    <view class="summary-card income">
+      <text class="summary-label">累计收入</text>
+      <text class="summary-value">{{totalIncomeDisplay}}</text>
+    </view>
+    <view class="summary-card neutral">
+      <text class="summary-label">记录概况</text>
+      <text class="summary-value">{{recordCount}} 笔</text>
+      <text class="summary-sub">{{activeDays}} 天有记账</text>
+    </view>
+  </view>
+
+  <view wx:if="{{isEditMode && selectedCount > 0}}" class="batch-action-bar animate-slideUp">
+    <text class="selected-hint">已选择 {{selectedCount}} 项</text>
+    <view class="action-btns">
+      <view class="action-btn delete" bindtap="deleteSelectedBills">
+        <text class="action-icon">🗑️</text>
+        <text class="action-text">删除</text>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{groupedBills.length === 0}}" class="empty-state animate-slideUp stagger-3">
+    <view class="empty-icon">📝</view>
+    <text class="empty-text">暂无账单记录</text>
+    <text class="empty-hint">快去记一笔吧~</text>
+  </view>
+
+  <block wx:else>
+    <view wx:for="{{groupedBills}}" wx:key="date" class="date-group animate-slideUp stagger-{{index % 5 + 2}}">
+      <view class="date-header">
+        <view class="date-header-left">
+          <text class="date-label">{{item.dateLabel}}</text>
+          <text class="date-count">{{item.bills.length}} 笔</text>
+        </view>
+        <view class="date-totals">
+          <text wx:if="{{item.totalExpense > 0}}" class="date-total expense">-¥{{item.totalExpenseStr}}</text>
+          <text wx:if="{{item.totalIncome > 0}}" class="date-total income">+¥{{item.totalIncomeStr}}</text>
+        </view>
+      </view>
+
+      <view class="bill-list">
+        <view
+          class="bill-item {{isEditMode ? 'edit-mode' : ''}} {{selectedBills[bill.id] ? 'selected' : ''}}"
+          wx:for="{{item.bills}}"
+          wx:for-item="bill"
+          wx:for-index="billIdx"
+          wx:key="id"
+          bindtap="onBillTap"
+          data-bill="{{bill}}"
+          data-bill-id="{{bill.id}}"
+          hover-class="bill-item-hover"
+          hover-stay-time="150"
+        >
+          <view class="bill-checkbox" wx:if="{{isEditMode}}" catchtap="toggleSelectBill" data-bill-id="{{bill.id}}">
+            <view class="checkbox {{selectedBills[bill.id] ? 'checked' : ''}}">
+              <text wx:if="{{selectedBills[bill.id]}}" class="checkbox-icon">✓</text>
+            </view>
+          </view>
+
+          <view class="bill-left">
+            <view class="bill-icon {{bill.type === 'income' ? 'income' : 'expense'}}">
+              <text class="icon-emoji">{{bill.icon}}</text>
+            </view>
+            <view class="bill-info">
+              <text class="bill-category">{{bill.categoryName}}</text>
+              <view class="bill-meta-row">
+                <text class="bill-time">{{bill.time}}</text>
+                <text class="bill-tag {{bill.type === 'income' ? 'income' : 'expense'}}">{{bill.type === 'income' ? '收入' : '支出'}}</text>
+              </view>
+              <text class="bill-remark" wx:if="{{bill.remark}}">{{bill.remark}}</text>
+            </view>
+          </view>
+          <text class="bill-amount {{bill.type === 'income' ? 'income' : ''}}">{{bill.amountDisplay}}</text>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>

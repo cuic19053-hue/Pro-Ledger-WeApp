@@ -1,0 +1,156 @@
+<view class="page">
+  <view class="page-header">
+    <text class="page-title">预算管理</text>
+  </view>
+
+  <view class="page-content">
+    <view wx:if="{{budgetPercent > 80}}" class="budget-warning-banner animate-scaleIn">
+      <view class="warning-icon">⚠️</view>
+      <view class="warning-content">
+        <text class="warning-title">{{budgetPercent > 100 ? '预算已超支！' : '预算即将用完'}}</text>
+        <text class="warning-desc">{{budgetPercent > 100 ? '请调整支出计划' : '建议理性消费'}}</text>
+      </view>
+    </view>
+
+    <view wx:if="{{!isEditing}}" class="budget-overview-card card card-elevated animate-scaleIn">
+      <view class="overview-header">
+        <text class="overview-label">本月总预算</text>
+        <view class="badge {{budgetPercent > 100 ? 'badge-danger' : 'badge-primary'}}">{{currentMonthDisplay}}</view>
+      </view>
+
+      <view class="overview-amount">
+        <text class="amount-currency">¥</text>
+        <text class="amount-value text-numeric {{budgetPercent > 100 ? 'text-danger' : ''}}">{{budget.total}}</text>
+      </view>
+
+      <view class="overview-remaining {{remaining < 0 ? 'over' : ''}}">
+        <text class="remaining-label">剩余预算</text>
+        <text class="remaining-value text-numeric">¥{{remaining}}</text>
+      </view>
+
+      <view class="overview-progress">
+        <view class="progress-track">
+          <view class="progress-bar {{budgetPercent > 100 ? 'progress-bar-danger' : ''}}"
+                style="width: {{budgetDisplayPercent}}%"></view>
+        </view>
+        <text class="progress-text {{budgetPercent > 100 ? 'text-danger' : ''}}">已使用 {{budgetPercent}}%</text>
+      </view>
+    </view>
+
+    <view wx:if="{{isEditing}}" class="edit-card card animate-scaleIn">
+      <view class="edit-section">
+        <view class="edit-section-header">
+          <text class="edit-section-title">设置总预算</text>
+        </view>
+        <view class="edit-input-container">
+          <text class="edit-currency">¥</text>
+          <input
+            class="edit-input"
+            type="digit"
+            placeholder="0"
+            value="{{editTotal}}"
+            bindinput="onTotalInput"
+          />
+        </view>
+      </view>
+
+      <view class="divider"></view>
+
+      <view class="edit-section">
+        <view class="edit-section-header">
+          <text class="edit-section-title">分类预算</text>
+          <text class="edit-section-subtitle">可选</text>
+        </view>
+        <view class="category-edit-list">
+          <view class="category-edit-item" wx:for="{{editCategories}}" wx:key="id">
+            <view class="category-edit-left">
+              <view class="category-icon">{{item.icon}}</view>
+              <view class="category-info">
+                <text class="category-name">{{item.name}}</text>
+                <text class="category-used text-muted text-numeric">已用 ¥{{item.used}}</text>
+              </view>
+            </view>
+            <view class="category-edit-right">
+              <text class="currency-prefix">¥</text>
+              <input
+                class="category-limit-input"
+                type="digit"
+                placeholder="0"
+                value="{{item.limit}}"
+                data-index="{{index}}"
+                bindinput="onCategoryLimitInput"
+              />
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="edit-actions">
+        <button class="btn btn-secondary btn-lg btn-full" bindtap="cancelEdit">
+          取消
+        </button>
+        <button class="btn btn-primary btn-lg btn-full" bindtap="saveBudget">
+          保存
+        </button>
+      </view>
+    </view>
+
+    <view class="category-budgets" wx:if="{{!isEditing}}">
+      <view class="section-header animate-slideUp stagger-1">
+        <text class="section-title">分类预算</text>
+      </view>
+
+      <view class="category-list">
+        <view class="category-card card card-compact animate-slideUp stagger-{{index % 5 + 1}}"
+              wx:for="{{categoryBudgets}}"
+              wx:key="id">
+          <view class="category-card-header">
+            <view class="category-card-left">
+              <view class="category-icon-wrapper">{{item.icon}}</view>
+              <view class="category-card-info">
+                <text class="category-card-name">{{item.name}}</text>
+                <text class="category-card-amount {{item.percent > 100 ? 'over' : ''}} text-numeric">
+                  ¥{{item.used}} / ¥{{item.limit}}
+                </text>
+              </view>
+            </view>
+            <view class="category-card-right">
+              <text class="category-percent {{item.percent > 100 ? 'over' : ''}} text-numeric">{{item.percent}}%</text>
+            </view>
+          </view>
+          <view wx:if="{{item.percent > 80}}" class="category-warning">
+            <text class="category-warning-text">{{item.percent > 100 ? '⚠️ 已超支' : '⚠️ 即将超支'}}</text>
+          </view>
+          <view class="category-card-progress">
+            <view class="progress-track">
+              <view class="progress-bar {{item.percent > 100 ? 'progress-bar-danger' : ''}}"
+                    style="width: {{item.displayPercent}}%"></view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="action-section" wx:if="{{!isEditing}}">
+      <view class="action-card card card-compact animate-slideUp stagger-2" bindtap="startEdit">
+        <view class="action-left">
+          <view class="action-icon-wrapper">
+            <text class="action-icon">⚙️</text>
+          </view>
+          <text class="action-label">修改预算</text>
+        </view>
+        <text class="action-arrow">›</text>
+      </view>
+
+      <view class="action-card card card-compact danger animate-slideUp stagger-3" bindtap="resetBudget">
+        <view class="action-left">
+          <view class="action-icon-wrapper danger">
+            <text class="action-icon">🔄</text>
+          </view>
+          <text class="action-label">重置预算</text>
+        </view>
+        <text class="action-arrow">›</text>
+      </view>
+    </view>
+  </view>
+</view>

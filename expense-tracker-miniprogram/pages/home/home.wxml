@@ -1,0 +1,156 @@
+<view class="page home-page">
+  <view class="hero-card animate-slideUp stagger-1">
+    <view class="hero-top">
+      <view class="hero-copy">
+        <text class="hero-kicker">MONTHLY PULSE</text>
+        <text class="hero-title">{{currentMonth}}支出概览</text>
+      </view>
+      <view class="hero-badge">
+        <text class="hero-badge-text">实时同步</text>
+      </view>
+    </view>
+
+    <view class="hero-amount-row">
+      <text class="hero-currency">¥</text>
+      <text class="hero-amount">{{displayExpense}}</text>
+    </view>
+
+    <view class="hero-meta-grid">
+      <view class="hero-meta-card">
+        <text class="hero-meta-label">本月收入</text>
+        <text class="hero-meta-value income">{{monthlyIncomeDisplay}}</text>
+      </view>
+      <view class="hero-meta-card">
+        <text class="hero-meta-label">记录笔数</text>
+        <text class="hero-meta-value">{{billCount}}</text>
+      </view>
+      <view class="hero-meta-card">
+        <text class="hero-meta-label">月度结余</text>
+        <text class="hero-meta-value {{netAmount >= 0 ? 'income' : 'expense'}}">{{netAmountDisplay}}</text>
+      </view>
+    </view>
+
+    <view wx:if="{{budget > 0}}" class="hero-budget-panel">
+      <view class="hero-budget-head">
+        <text class="hero-budget-title">预算进度</text>
+        <text class="hero-budget-value">{{budgetPercentage}}%</text>
+      </view>
+      <view class="hero-budget-progress">
+        <view class="hero-budget-fill" style="width: {{budgetPercentage}}%;"></view>
+      </view>
+      <text class="hero-budget-hint">本月还可支配 ¥{{remainBudget}}</text>
+    </view>
+
+    <view wx:else class="hero-budget-panel empty">
+      <text class="hero-budget-title">预算尚未设置</text>
+      <text class="hero-budget-hint">前往“我的”页设置预算后，这里会显示本月控制节奏。</text>
+    </view>
+  </view>
+
+  <view class="section-shell quick-bills-section animate-slideUp stagger-2" wx:if="{{quickBills.length > 0}}">
+    <view class="section-header">
+      <view>
+        <text class="section-kicker">SMART SHORTCUT</text>
+        <text class="section-title">快速记账</text>
+      </view>
+      <text class="section-more" bindtap="goToQuickBillsManage">管理</text>
+    </view>
+
+    <scroll-view class="quick-bills-scroll" scroll-x="true" enhanced="true" show-scrollbar="{{false}}">
+      <view class="quick-bills-list">
+        <view
+          class="quick-bill-card"
+          wx:for="{{quickBills}}"
+          wx:key="id"
+          bindtap="onQuickBillTap"
+          data-bill="{{item}}"
+          hover-class="quick-bill-card-hover"
+          hover-stay-time="150"
+        >
+          <view class="quick-bill-icon {{item.type === 'income' ? 'income' : 'expense'}}">
+            <text class="quick-bill-emoji">{{item.icon}}</text>
+          </view>
+          <text class="quick-bill-name">{{item.name}}</text>
+          <text class="quick-bill-amount">¥{{item.displayAmount}}</text>
+          <text class="quick-bill-caption">{{item.type === 'income' ? '收入模板' : '支出模板'}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="usage-drawer-overlay {{showUsageDrawer ? 'show' : ''}}" bindtap="closeUsageDrawer">
+    <view class="usage-drawer" catchtap="stopPropagation">
+      <view class="usage-drawer-handle"></view>
+      <view class="usage-drawer-header">
+        <text class="usage-drawer-title">{{currentQuickBill.name}}</text>
+        <text class="usage-drawer-subtitle">选择更具体的用途，直接完成一笔快捷记账</text>
+      </view>
+      <view class="usage-drawer-list">
+        <view
+          class="usage-drawer-item {{item.id === currentQuickBill.defaultUsageId ? 'default' : ''}}"
+          wx:for="{{currentUsages}}"
+          wx:key="id"
+          bindtap="onUsageSelect"
+          data-usage="{{item}}"
+          hover-class="usage-drawer-item-hover"
+          hover-stay-time="150"
+        >
+          <view class="usage-drawer-item-left">
+            <text class="usage-drawer-item-name">{{item.name}}</text>
+            <text class="usage-drawer-item-remark" wx:if="{{item.remark}}">{{item.remark}}</text>
+          </view>
+          <view class="usage-drawer-item-right">
+            <text class="usage-drawer-item-amount">¥{{item.amount}}</text>
+            <text class="usage-drawer-item-badge" wx:if="{{item.id === currentQuickBill.defaultUsageId}}">默认</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-shell list-section animate-slideUp stagger-3">
+    <view class="section-header">
+      <view>
+        <text class="section-kicker">TODAY</text>
+        <text class="section-title">今日明细</text>
+      </view>
+      <text class="section-more" bindtap="goToBills">全部账单</text>
+    </view>
+
+    <view wx:if="{{recentBills.length === 0}}" class="empty-state">
+      <view class="empty-icon">📝</view>
+      <text class="empty-text">今天还没有新增记录</text>
+      <text class="empty-hint">点击右下角按钮，先记下第一笔。</text>
+    </view>
+
+    <view wx:else class="bill-list">
+      <view
+        class="bill-item"
+        wx:for="{{recentBills}}"
+        wx:key="id"
+        bindtap="goToDetail"
+        data-bill="{{item}}"
+        hover-class="bill-item-hover"
+        hover-stay-time="150"
+      >
+        <view class="bill-left">
+          <view class="bill-icon {{item.type === 'income' ? 'income' : 'expense'}}">
+            <text class="icon-emoji">{{item.icon}}</text>
+          </view>
+          <view class="bill-info">
+            <text class="bill-category">{{item.categoryName}}</text>
+            <view class="bill-meta-row">
+              <text class="bill-time">{{item.time}}</text>
+              <text class="bill-type {{item.type === 'income' ? 'income' : 'expense'}}">{{item.type === 'income' ? '收入' : '支出'}}</text>
+            </view>
+          </view>
+        </view>
+        <text class="bill-amount {{item.type === 'income' ? 'income' : ''}}">{{item.amountDisplay}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="fab-button home-fab" bindtap="navToAdd">
+    <text class="fab-icon">+</text>
+  </view>
+</view>

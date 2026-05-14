@@ -1,0 +1,61 @@
+<view class="page animate-fade-in">
+  <view class="hero-section">
+    <view class="logo-wrap">
+      <text class="logo-icon">💰</text>
+    </view>
+    <text class="app-title">CH 记账</text>
+    <text class="app-subtitle">精致记账体验</text>
+  </view>
+
+  <view class="login-card">
+    <view class="profile-section">
+      <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+        <image wx:if="{{avatarUrl}}" src="{{avatarUrl}}" class="avatar-img" mode="aspectFill"></image>
+        <view wx:else class="default-avatar">
+          <text class="avatar-emoji">😊</text>
+        </view>
+        <view class="avatar-edit-hint">
+          <text class="edit-hint-text">点击设置头像</text>
+        </view>
+      </button>
+
+      <view class="nickname-input-wrap">
+        <input
+          type="nickname"
+          class="nickname-input"
+          placeholder="点击设置昵称"
+          placeholder-style="color: var(--text-secondary);"
+          value="{{nickName}}"
+          bindinput="onNicknameInput"
+        />
+      </view>
+    </view>
+
+    <view class="agreement-row">
+      <checkbox checked="{{agreement}}" bindtap="toggleAgreement" class="agreement-checkbox" disabled="{{isLoading}}"/>
+      <text class="agreement-text" bindtap="toggleAgreement">
+        我已阅读并同意
+        <text class="agreement-link" catchtap="viewAgreement">《用户协议》</text>
+        和
+        <text class="agreement-link" catchtap="viewPrivacy">《隐私政策》</text>
+      </text>
+    </view>
+
+    <button
+      class="login-btn {{agreement ? 'active' : ''}}"
+      bindtap="handleWechatLogin"
+      disabled="{{isLoading || !agreement}}"
+    >
+      <view wx:if="{{isLoading}}" class="loading-spinner"></view>
+      <text>{{isLoading ? '正在登录...' : '微信一键登录'}}</text>
+    </button>
+
+    <view class="action-hints">
+      <text class="hint-item">✅ 免费使用</text>
+      <text class="hint-divider">|</text>
+      <text class="hint-item">🔒 数据安全</text>
+      <text class="hint-divider">|</text>
+      <text class="hint-item">☁️ 云端同步</text>
+    </view>
+  </view>
+</view>

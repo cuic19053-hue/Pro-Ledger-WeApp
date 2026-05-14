@@ -1,0 +1,179 @@
+<view class="page add-page">
+  <view class="page-header animate-slideUp stagger-1">
+    <view class="page-header-copy">
+      <text class="page-kicker">QUICK ENTRY</text>
+      <text class="large-title">记一笔</text>
+    </view>
+    <view class="header-date-badge">
+      <text class="header-date-text">{{billDateDisplay}}</text>
+    </view>
+  </view>
+
+  <view class="type-tabs animate-slideUp stagger-2">
+    <view class="type-tab {{type === 'expense' ? 'active' : ''}}" bindtap="switchType" data-type="expense">
+      <text class="type-text">支出</text>
+    </view>
+    <view class="type-tab {{type === 'income' ? 'active' : ''}}" bindtap="switchType" data-type="income">
+      <text class="type-text">收入</text>
+    </view>
+    <view class="type-indicator" style="transform: translateX({{type === 'income' ? '100%' : '0'}})"></view>
+  </view>
+
+  <view class="amount-card animate-slideUp stagger-2">
+    <text class="amount-label">{{type === 'expense' ? '本次支出' : '本次收入'}}</text>
+    <view class="amount-wrapper">
+      <text class="currency">¥</text>
+      <text class="amount-display {{amountAnimating ? 'amount-bounce' : ''}}">{{amount || '0'}}</text>
+    </view>
+    <view class="amount-focus">
+      <view class="selected-category-pill">
+        <text class="selected-category-label">当前分类</text>
+        <text class="selected-category-value">{{selectedCategoryName || '未选择'}}</text>
+      </view>
+      <text class="amount-tip">{{remark ? '备注已填写' : '可在下方补充备注'}}</text>
+    </view>
+  </view>
+
+  <view class="section-card quick-bills-section animate-slideUp stagger-3" wx:if="{{quickBills.length > 0}}">
+    <view class="section-header">
+      <view>
+        <text class="section-kicker">SHORTCUT</text>
+        <text class="section-title">常用模板</text>
+      </view>
+      <text class="section-subtitle">点一下即可填充</text>
+    </view>
+
+    <scroll-view scroll-x="true" class="quick-bills-scroll" show-scrollbar="false">
+      <view class="quick-bills-list">
+        <view
+          wx:for="{{quickBills}}"
+          wx:key="id"
+          class="quick-bill-item"
+          hover-class="quick-bill-item-hover"
+          bindtap="onQuickBillTap"
+          data-bill-id="{{item.id}}"
+        >
+          <view class="quick-bill-icon-wrap">
+            <text class="quick-bill-icon">{{item.icon}}</text>
+          </view>
+          <text class="quick-bill-name">{{item.name}}</text>
+          <text class="quick-bill-amount">¥{{item.defaultAmount}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="section-card category-section animate-slideUp stagger-3">
+    <view class="section-header">
+      <view>
+        <text class="section-kicker">CATEGORY</text>
+        <text class="section-title">选择分类</text>
+      </view>
+      <text class="section-subtitle">保持记账颗粒度清晰</text>
+    </view>
+
+    <view class="category-grid">
+      <view
+        wx:for="{{categories}}"
+        wx:key="id"
+        class="category-item {{selectedCategory === item.id ? 'selected' : ''}} {{justSelected === item.id ? 'bounce' : ''}}"
+        bindtap="selectCategory"
+        data-category="{{item.id}}"
+      >
+        <view class="category-icon-wrap">
+          <text class="category-icon">{{item.icon}}</text>
+        </view>
+        <text class="category-name">{{item.name}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-card remark-section animate-slideUp stagger-4" wx:if="{{showRemark}}">
+    <view class="section-header compact">
+      <view>
+        <text class="section-kicker">NOTE</text>
+        <text class="section-title">备注</text>
+      </view>
+    </view>
+    <input
+      class="remark-input"
+      placeholder="添加备注..."
+      placeholder-style="color: var(--text-secondary);"
+      value="{{remark}}"
+      bindinput="onRemarkInput"
+      bindconfirm="onRemarkConfirm"
+    />
+  </view>
+
+  <view class="keyboard-section animate-slideUp stagger-4">
+    <view class="keyboard glass-keyboard">
+      <view class="keyboard-row">
+        <view class="keyboard-key" hover-class="keyboard-key-hover" bindtap="onKeyPress" data-key="1">1</view>
+        <view class="keyboard-key" hover-class="keyboard-key-hover" bindtap="onKeyPress" data-key="2">2</view>
+        <view class="keyboard-key" hover-class="keyboard-key-hover" bindtap="onKeyPress" data-key="3">3</view>
+      </view>
+      <view class="keyboard-row">
+        <view class="keyboard-key" hover-class="keyboard-key-hover" bindtap="onKeyPress" data-key="4">4</view>
+        <view class="keyboard-key" hover-class="keyboard-key-hover" bindtap="onKeyPress" data-key="5">5</view>
+        <view class="keyboard-key" hover-class="keyboard-key-hover" bindtap="onKeyPress" data-key="6">6</view>
+      </view>
+      <view class="keyboard-row">
+        <view class="keyboard-key" hover-class="keyboard-key-hover" bindtap="onKeyPress" data-key="7">7</view>
+        <view class="keyboard-key" hover-class="keyboard-key-hover" bindtap="onKeyPress" data-key="8">8</view>
+        <view class="keyboard-key" hover-class="keyboard-key-hover" bindtap="onKeyPress" data-key="9">9</view>
+      </view>
+      <view class="keyboard-row">
+        <view class="keyboard-key action" hover-class="keyboard-key-hover" bindtap="onKeyPress" data-key=".">.</view>
+        <view class="keyboard-key" hover-class="keyboard-key-hover" bindtap="onKeyPress" data-key="0">0</view>
+        <view class="keyboard-key action delete" hover-class="keyboard-key-hover" bindtap="onKeyPress" data-key="backspace">
+          <text class="delete-icon">⌫</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="action-row animate-slideUp stagger-5">
+    <view class="action-tools">
+      <view class="action-btn remark-btn" bindtap="toggleRemark">
+        <text>{{showRemark ? '收起备注' : '添加备注'}}</text>
+      </view>
+      <picker mode="date" value="{{billDate}}" bindchange="onDateChange">
+        <view class="action-btn date-btn">
+          <text>{{billDateDisplay}}</text>
+        </view>
+      </picker>
+    </view>
+    <button
+      class="save-btn {{amount ? 'active' : ''}}"
+      bindtap="onSave"
+      disabled="{{!amount || isSaving}}"
+    >
+      {{isSaving ? '保存中...' : '完成记账'}}
+    </button>
+  </view>
+
+  <view class="usage-drawer-mask {{showUsageDrawer ? 'visible' : ''}}" bindtap="closeUsageDrawer"></view>
+  <view class="usage-drawer {{showUsageDrawer ? 'visible' : ''}}">
+    <view class="usage-drawer-handle"></view>
+    <view class="usage-drawer-header">
+      <text class="usage-drawer-title">{{currentQuickBill.name}} - 选择用途</text>
+      <text class="usage-drawer-subtitle">模板支持多个用途时，可在这里进一步细化。</text>
+    </view>
+    <view class="usage-drawer-list">
+      <view
+        wx:for="{{currentQuickBill.usages}}"
+        wx:key="id"
+        class="usage-item {{selectedUsageId === item.id ? 'selected' : ''}}"
+        hover-class="usage-item-hover"
+        bindtap="onUsageSelect"
+        data-usage-id="{{item.id}}"
+      >
+        <view class="usage-item-left">
+          <text class="usage-item-name">{{item.name}}</text>
+          <text class="usage-item-remark" wx:if="{{item.remark}}">{{item.remark}}</text>
+        </view>
+        <text class="usage-item-amount">¥{{item.amount}}</text>
+      </view>
+    </view>
+  </view>
+</view>

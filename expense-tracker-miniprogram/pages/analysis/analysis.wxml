@@ -1,0 +1,62 @@
+<view class="container">
+  <view class="page-header">
+    <text class="page-title">智能分析</text>
+  </view>
+  
+  <!-- API状态 -->
+  <view class="api-status">
+    <text class="api-status-icon">🔗</text>
+    <view class="api-status-text">
+      <text class="api-status-title">AI 分析已就绪</text>
+      <text class="api-status-desc">基于您的消费数据</text>
+    </view>
+    <button class="api-status-action" bindtap="switchAPI">切换</button>
+  </view>
+  
+  <!-- 分析选项 -->
+  <view class="card analysis-section">
+    <text class="section-title">选择分析维度</text>
+    
+    <view class="analysis-input-group">
+      <text class="analysis-label">时间范围</text>
+      <picker bindchange="onTimeRangeChange" value="{{timeRangeIndex}}" range="{{timeRanges}}">
+        <view class="picker-value">{{timeRanges[timeRangeIndex]}}</view>
+      </picker>
+    </view>
+    
+    <view class="analysis-input-group">
+      <text class="analysis-label">分析类型</text>
+      <picker bindchange="onAnalysisTypeChange" value="{{analysisTypeIndex}}" range="{{analysisTypes}}">
+        <view class="picker-value">{{analysisTypes[analysisTypeIndex]}}</view>
+      </picker>
+    </view>
+    
+    <view class="quick-prompts">
+      <text class="prompt-chip {{selectedPrompt === index ? 'active' : ''}}" 
+            wx:for="{{quickPrompts}}" 
+            wx:key="index"
+            bindtap="selectPrompt" 
+            data-index="{{index}}">{{item}}</text>
+    </view>
+    
+    <view class="analysis-input-group">
+      <text class="analysis-label">自定义问题</text>
+      <textarea class="analysis-textarea" 
+                placeholder="输入你的问题，例如：分析我最近一个月的消费结构..." 
+                bindinput="onQuestionInput"
+                value="{{question}}"/>
+    </view>
+    
+    <button class="btn analyze-btn" bindtap="startAnalysis" loading="{{analyzing}}">
+      {{analyzing ? '分析中...' : '开始分析'}}
+    </button>
+  </view>
+  
+  <!-- 分析结果 -->
+  <view class="analysis-result {{showResult ? 'active' : ''}}">
+    <text class="analysis-result-title">分析结果</text>
+    <view class="analysis-result-content">
+      <rich-text nodes="{{analysisResult}}"></rich-text>
+    </view>
+  </view>
+</view>

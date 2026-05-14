@@ -1,0 +1,36 @@
+{
+  "name": "expense-tracker-miniprogram",
+  "version": "1.0.0",
+  "description": "微信小程序记账应用",
+  "main": "app.js",
+  "scripts": {
+    "test": "jest",
+    "test:unit": "jest tests/unit",
+    "test:integration": "jest tests/integration",
+    "test:e2e": "jest tests/e2e",
+    "test:coverage": "jest --coverage"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "collectCoverageFrom": [
+      "utils/*.js",
+      "pages/**/*.js",
+      "!**/node_modules/**",
+      "!**/tests/**"
+    ],
+    "coverageDirectory": "coverage",
+    "coverageReporters": ["text", "lcov", "html"],
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/tests/setup.js"
+    ]
+  },
+  "keywords": ["wechat", "miniprogram", "expense", "tracker"],
+  "author": "Developer",
+  "license": "MIT"
+}

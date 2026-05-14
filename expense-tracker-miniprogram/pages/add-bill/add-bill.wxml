@@ -1,0 +1,150 @@
+<view class="container">
+  <view class="header">
+    <text class="title">记一笔</text>
+    <button class="close-btn" bindtap="onCancel" aria-label="取消">取消</button>
+  </view>
+  
+  <!-- 收支类型切换 -->
+  <view class="type-tabs" role="tablist">
+    <view 
+      class="type-tab {{type === 'expense' ? 'active' : ''}}" 
+      bindtap="switchType" 
+      data-type="expense"
+      role="tab"
+      aria-selected="{{type === 'expense'}}"
+    >
+      <text class="type-icon">💰</text>
+      <text class="type-text">支出</text>
+    </view>
+    <view 
+      class="type-tab {{type === 'income' ? 'active' : ''}}" 
+      bindtap="switchType" 
+      data-type="income"
+      role="tab"
+      aria-selected="{{type === 'income'}}"
+    >
+      <text class="type-icon">📈</text>
+      <text class="type-text">收入</text>
+    </view>
+  </view>
+  
+  <!-- 常用账单快捷选择 -->
+  <view class="quick-bills-section" wx:if="{{quickBills.length > 0}}">
+    <view class="section-title">常用账单</view>
+    <scroll-view class="quick-bills-scroll" scroll-x="true" show-scrollbar="false">
+      <view class="quick-bills-list">
+        <view 
+          wx:for="{{quickBills}}" 
+          wx:key="id"
+          class="quick-bill-item"
+          bindtap="selectQuickBill"
+          data-bill="{{item}}"
+        >
+          <text class="quick-bill-icon">{{item.icon}}</text>
+          <text class="quick-bill-name">{{item.name}}</text>
+          <text class="quick-bill-amount">¥{{item.defaultAmount}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+  
+  <!-- 金额输入 -->
+  <view class="amount-section">
+    <view class="currency-symbol">¥</view>
+    <input 
+      type="digit" 
+      class="amount-input {{formErrors.amount ? 'error' : ''}}" 
+      placeholder="0.00" 
+      value="{{amount}}" 
+      bindinput="onAmountInput" 
+      bindblur="validateAmount"
+      focus
+      aria-label="输入金额"
+      aria-invalid="{{formErrors.amount ? 'true' : 'false'}}"
+    />
+    <view wx:if="{{formErrors.amount}}" class="error-message">{{formErrors.amount}}</view>
+  </view>
+  
+  <!-- 分类选择 -->
+  <view class="section">
+    <text class="section-title">选择分类</text>
+    <view wx:if="{{formErrors.category}}" class="error-message">{{formErrors.category}}</view>
+    <view class="category-grid" role="listbox">
+      <view
+        wx:for="{{categories}}"
+        wx:key="id"
+        class="category-item {{selectedCategory === item.id ? 'selected' : ''}}"
+        bindtap="selectCategory"
+        data-category="{{item.id}}"
+        role="option"
+        aria-selected="{{selectedCategory === item.id}}"
+      >
+        <text class="category-icon">{{item.icon || '📁'}}</text>
+        <text class="category-name">{{item.name}}</text>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 日期选择 -->
+  <view class="section">
+    <text class="section-title">日期</text>
+    <picker mode="date" value="{{date}}" bindchange="onDateChange" aria-label="选择日期">
+      <view class="picker">
+        <text class="picker-text">{{date}}</text>
+        <text class="picker-arrow">›</text>
+      </view>
+    </picker>
+  </view>
+  
+  <!-- 备注输入 -->
+  <view class="section">
+    <text class="section-title">备注</text>
+    <textarea 
+      class="remark-input" 
+      placeholder="添加备注（可选）..." 
+      value="{{remark}}" 
+      bindinput="onRemarkInput"
+      maxlength="100"
+      aria-label="添加备注"
+      show-confirm-bar="{{false}}"
+      auto-height
+    ></textarea>
+    <view class="char-count">{{remark.length}}/100</view>
+  </view>
+  
+  <!-- 保存按钮 -->
+  <button 
+    class="save-btn {{isSaving ? 'disabled' : ''}}" 
+    bindtap="onSave"
+    disabled="{{isSaving}}"
+    aria-label="保存账单"
+  >
+    {{isSaving ? '保存中...' : '保存'}}
+  </button>
+</view>
+
+<!-- 用途选择弹窗 -->
+<view class="usage-mask" wx:if="{{showUsageSelector}}" bindtap="hideUsageSelector"></view>
+<view class="usage-selector" wx:if="{{showUsageSelector}}">
+  <view class="usage-selector-header">
+    <text class="usage-selector-title">选择{{currentQuickBill.name}}用途</text>
+    <view class="usage-close-btn" bindtap="hideUsageSelector">
+      <text class="usage-close-icon">✕</text>
+    </view>
+  </view>
+  <scroll-view class="usage-list" scroll-y="true">
+    <view 
+      wx:for="{{currentBillUsages}}" 
+      wx:key="id"
+      class="usage-item"
+      bindtap="selectUsage"
+      data-usage="{{item}}"
+    >
+      <view class="usage-info">
+        <text class="usage-name">{{item.name}}</text>
+        <text class="usage-amount">¥{{item.amount}}</text>
+      </view>
+      <text class="usage-remark" wx:if="{{item.remark}}">{{item.remark}}</text>
+    </view>
+  </scroll-view>
+</view>

@@ -1,0 +1,244 @@
+.page {
+  min-height: 100vh;
+  background: var(--bg-primary);
+  padding: var(--spacing-48) var(--spacing-32);
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: var(--spacing-40);
+  padding-top: var(--spacing-64);
+}
+
+.logo-wrap {
+  width: 120rpx;
+  height: 120rpx;
+  background: linear-gradient(135deg, #5E5CE6 0%, #7E7CF0 100%);
+  border-radius: 32rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 12rpx 32rpx rgba(94, 92, 230, 0.3);
+  margin-bottom: var(--spacing-24);
+}
+
+.logo-icon {
+  font-size: 56rpx;
+}
+
+.app-title {
+  font-size: 48rpx;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.5rpx;
+  margin-bottom: var(--spacing-8);
+}
+
+.app-subtitle {
+  font-size: 26rpx;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+.login-card {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-2xl);
+  padding: var(--spacing-48) var(--spacing-32);
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: var(--spacing-32);
+  width: 100%;
+}
+
+.avatar-btn {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 50%;
+  padding: 0;
+  margin: 0;
+  margin-bottom: var(--spacing-20);
+  background: transparent;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: visible;
+}
+
+.avatar-btn::after {
+  border: none;
+}
+
+.avatar-btn .avatar-img {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 50%;
+  border: 4rpx solid var(--accent-primary);
+}
+
+.avatar-btn .default-avatar {
+  width: 140rpx;
+  height: 140rpx;
+  background: rgba(94, 92, 230, 0.08);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 4rpx dashed var(--accent-primary);
+}
+
+.avatar-edit-hint {
+  margin-top: var(--spacing-8);
+}
+
+.edit-hint-text {
+  font-size: 20rpx;
+  color: var(--accent-primary);
+  font-weight: 500;
+}
+
+.nickname-input-wrap {
+  width: 100%;
+  max-width: 400rpx;
+  margin-bottom: var(--spacing-16);
+}
+
+.nickname-input {
+  width: 100%;
+  height: 72rpx;
+  text-align: center;
+  font-size: 28rpx;
+  font-weight: 500;
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-pill);
+  padding: 0 var(--spacing-24);
+}
+
+.avatar-display {
+  margin-bottom: var(--spacing-24);
+}
+
+.default-avatar {
+  width: 140rpx;
+  height: 140rpx;
+  background: rgba(94, 92, 230, 0.08);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-emoji {
+  font-size: 72rpx;
+}
+
+.welcome-text {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-40);
+}
+
+.agreement-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-12);
+  margin-bottom: var(--spacing-32);
+  width: 100%;
+}
+
+.agreement-checkbox {
+  margin-top: 4rpx;
+  transform: scale(0.85);
+}
+
+.agreement-text {
+  font-size: 22rpx;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  flex: 1;
+}
+
+.agreement-link {
+  color: var(--accent-primary);
+  font-weight: 500;
+}
+
+.login-btn {
+  width: 100%;
+  height: 96rpx;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  font-size: 30rpx;
+  font-weight: 700;
+  border-radius: var(--radius-xl);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-12);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.login-btn.active {
+  background: var(--accent-primary);
+  color: var(--color-white);
+  box-shadow: 0 8rpx 24rpx rgba(94, 92, 230, 0.35);
+}
+
+.login-btn.active:active {
+  transform: scale(0.97);
+}
+
+.login-btn::after {
+  border: none;
+}
+
+.loading-spinner {
+  width: 32rpx;
+  height: 32rpx;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.action-hints {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-16);
+  margin-top: var(--spacing-32);
+}
+
+.hint-item {
+  font-size: 20rpx;
+  color: var(--text-secondary);
+}
+
+.hint-divider {
+  font-size: 20rpx;
+  color: var(--text-secondary);
+  opacity: 0.5;
+}

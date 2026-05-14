@@ -1,0 +1,12 @@
+<view class="splash-container">
+  <view class="logo-section">
+    <text class="logo-icon">💰</text>
+    <text class="app-name">CH 记账</text>
+    <text class="app-slogan">精致记账，理性消费</text>
+  </view>
+  <view class="loading-dots">
+    <view class="dot"></view>
+    <view class="dot"></view>
+    <view class="dot"></view>
+  </view>
+</view>
